@@ -16,14 +16,12 @@ export default function HomeScreen() {
     if (!permissions?.granted || !micPermission.granted) {
       router.replace("/permissionsScreen");
     }
-    if(permissions?.granted || micPermission.granted){
+    if (permissions?.granted || micPermission.granted) {
       router.replace("/CameraScreen");
     }
   }, [router, permissions, micPermission]);
   return (
     <View style={styles.wrapper}>
-      
-      
       <Button
         title="Reset permissions (dev)"
         onPress={() => {
@@ -39,7 +37,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: COLORS.background
+    backgroundColor: COLORS.background,
   },
   devButton: {
     alignSelf: "center",
