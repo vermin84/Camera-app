@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.9,
     shadowRadius: 25,
 
-    elevation: 15,
+    elevation: 10,
   },
 
   outerRecording: {

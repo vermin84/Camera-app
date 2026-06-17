@@ -1,25 +1,24 @@
-import { Button, StyleSheet, View } from "react-native";
-
-import { useCameraPermissions, useMicrophonePermissions } from "expo-camera";
-//import * as MediaLibrary from "expo-media-library";
 import { COLORS } from "@/constants/colors";
+import { useCameraPermissions, useMicrophonePermissions } from "expo-camera";
+import * as MediaLibrary from "expo-media-library";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
+import { Button, StyleSheet, View } from "react-native";
 export default function HomeScreen() {
   const router = useRouter();
   const [permissions] = useCameraPermissions();
   const [micPermission] = useMicrophonePermissions();
-  //const [status]= MediaLibrary.usePermissions()
-
+ const [status]= MediaLibrary.usePermissions()
+  console.log(status)
   useEffect(() => {
-    if (!permissions || !micPermission) return;
-    if (!permissions?.granted || !micPermission.granted) {
+    if (!permissions || !micPermission || !status) return;
+    if (!permissions?.granted || !micPermission.granted || !status?.granted) {
       router.replace("/permissionsScreen");
     }
-    if (permissions?.granted || micPermission.granted) {
-      router.replace("/CameraScreen");
+    if (permissions?.granted && micPermission.granted && status?.granted) {
+      router.replace("/camera");
     }
-  }, [router, permissions, micPermission]);
+  }, [router, permissions, micPermission, status]);
   return (
     <View style={styles.wrapper}>
       <Button
