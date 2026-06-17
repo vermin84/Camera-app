@@ -1,11 +1,12 @@
 import CameraButton from "@/components/cameraScreen/CameraButton";
+import ShootButton from "@/components/cameraScreen/ShootButton";
 import { COLORS } from "@/constants/colors";
 import { useCameraController } from "@/hooks/useCameraControlles";
 import { CameraView } from "expo-camera";
 import { StyleSheet, View } from "react-native";
 
 export default function CameraScreen() {
-  const { state, dispatch } = useCameraController();
+  const { state, actions } = useCameraController();
 
   return (
     <View style={styles.cameraScreenWrapper}>
@@ -16,21 +17,24 @@ export default function CameraScreen() {
         <View style={styles.cameraButtons}>
           <CameraButton onPress={() => {}} name="images-outline" />
           <CameraButton
-            onPress={() => dispatch({ type: "SET_MODE", payload: "photo" })}
+            onPress={actions.setPhoto}
             name={state.mode === "photo" ? "camera" : "camera-outline"}
           />
           <CameraButton
-            onPress={() => dispatch({ type: "TOGGLE_FLASH" })}
+            onPress={actions.toggleFlash}
             name={state.flash ? "flash" : "flash-outline"}
           />
           <CameraButton
-            onPress={() => dispatch({ type: "SET_MODE", payload: "video" })}
+            onPress={actions.setVideo}
             name={state.mode === "video" ? "videocam" : "videocam-outline"}
           />
           <CameraButton
-            onPress={() => dispatch({ type: "TOGGLE_FACING" })}
+            onPress={actions.flip}
             name="camera-reverse-outline"
           />
+        </View>
+        <View>
+           <ShootButton onPress={()=>{}}/>
         </View>
       </View>
     </View>
