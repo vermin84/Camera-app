@@ -26,7 +26,7 @@ console.log(micPermissions, cameraPermissions)*/
   const [status, requestMediaLibraryPermissionsAsync] = MediaLibrary.usePermissions();
   const router = useRouter();
   const isEnable = permissions?.granted === true && micPermission?.granted === true && status?.granted === true;
-
+  console.log(permissions, micPermission, status);
   function nextScreen() {
     if (!isEnable) {
       Alert.alert(
@@ -72,7 +72,7 @@ console.log(micPermissions, cameraPermissions)*/
           <AntDesign
             size={ICON_SIZE}
             color={status?.granted ? COLORS.primary : COLORS.muted}
-            name="folder1"
+            name="folder"
           />
           <PermissionBlock
             title="Media Library"

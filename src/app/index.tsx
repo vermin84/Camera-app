@@ -2,13 +2,20 @@ import { COLORS } from "@/constants/colors";
 import { useCameraPermissions, useMicrophonePermissions } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import { useRouter } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button, StyleSheet, View } from "react-native";
 export default function HomeScreen() {
   const router = useRouter();
   const [permissions] = useCameraPermissions();
   const [micPermission] = useMicrophonePermissions();
- const [status]= MediaLibrary.usePermissions()
+  const [status, setStatus] = useState<MediaLibrary.PermissionResponse | null>(null);
+  useEffect(() => {
+  (async () => {
+    const res  = await MediaLibrary.requestPermissionsAsync();
+
+    setStatus(res);
+  })();
+}, []);
   console.log(status)
   useEffect(() => {
     if (!permissions || !micPermission || !status) return;
