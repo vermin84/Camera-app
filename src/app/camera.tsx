@@ -2,6 +2,7 @@ import CameraButton from "@/components/cameraScreen/CameraButton";
 import ShootButton from "@/components/cameraScreen/ShootButton";
 import { COLORS } from "@/constants/colors";
 import { useCameraController } from "@/hooks/useCameraControlles";
+import { saveMedia } from "@/utils/saveMedia";
 import { CameraView } from "expo-camera";
 import { useRouter } from "expo-router";
 import { useRef } from "react";
@@ -12,51 +13,64 @@ export default function CameraScreen() {
   const router = useRouter();
   const cameraRef = useRef<CameraView>(null);
 
-  const isRecordingRef = useRef(false);
-  const videoPromiseRef = useRef<Promise<any> | null>(null);
+  const recordingRef = useRef(false);
+const recordingPromiseRef = useRef<any>(null);
 
-  const takePhoto = async () => {
-    if (!cameraRef.current) return;
+const takePhoto = async () => {
+  if (!cameraRef.current) return;
 
-    try {
-      // 📸 PHOTO MODE
-      if (state.mode === "photo") {
-        const photo = await cameraRef.current.takePictureAsync();
-        console.log("PHOTO:", photo);
-        return;
-      }
+  try {
+    // 📸 PHOTO
+    if (state.mode === "photo") {
+      const photo = await cameraRef.current.takePictureAsync();
+        const savedUri = await saveMedia(photo.uri, "photo");
 
-      // 🎥 VIDEO MODE
-      if (state.mode === "video") {
-        // START RECORDING
-        if (!isRecordingRef.current) {
-          isRecordingRef.current = true;
-
-          videoPromiseRef.current =
-            cameraRef.current.recordAsync();
-
-          return;
-        }
-
-        // STOP RECORDING
-        cameraRef.current.stopRecording();
-        isRecordingRef.current = false;
-
-        const video = await videoPromiseRef.current;
-        console.log("VIDEO:", video);
-
-        return;
-      }
-    } catch (e) {
-      console.log("Camera error:", e);
-      isRecordingRef.current = false;
+  console.log("SAVED PHOTO:", savedUri);
+      
+      return;
     }
-  };
+
+    // 🎥 VIDEO START
+    if (state.mode === "video" && !recordingRef.current) {
+      recordingRef.current = true;
+
+      // важно: не await!
+      recordingPromiseRef.current = cameraRef.current.recordAsync();
+      
+      recordingPromiseRef.current
+        .then(async (video: any) => {
+          const savedUri = await saveMedia(video.uri, "video");
+        console.log("SAVED VIDEO:", savedUri);
+          
+        })
+        .catch((e: any) => {
+          console.log("VIDEO ERROR:", e);
+        })
+        .finally(() => {
+          recordingRef.current = false;
+          recordingPromiseRef.current = null;
+        });
+
+      return;
+    }
+
+    // ⛔ STOP VIDEO
+    if (state.mode === "video" && recordingRef.current) {
+      cameraRef.current.stopRecording();
+      return;
+    }
+  } catch (e) {
+    console.log("Camera error:", e);
+    recordingRef.current = false;
+    recordingPromiseRef.current = null;
+  }
+};
 
   return (
     <View style={styles.cameraScreenWrapper}>
       <View style={styles.cameraWrapper}>
         <CameraView
+        mode={state.mode === "video" ? "video" : "picture"}
           ref={cameraRef}
           style={styles.camera}
           facing={state.facing}
