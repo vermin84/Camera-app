@@ -3,10 +3,12 @@ import ShootButton from "@/components/cameraScreen/ShootButton";
 import { COLORS } from "@/constants/colors";
 import { useCameraController } from "@/hooks/useCameraControlles";
 import { CameraView } from "expo-camera";
+import { useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";
 
 export default function CameraScreen() {
   const { state, actions } = useCameraController();
+  const router = useRouter(); 
 
   return (
     <View style={styles.cameraScreenWrapper}>
@@ -15,7 +17,7 @@ export default function CameraScreen() {
       </View>
       <View style={styles.controlsWrapper}>
         <View style={styles.cameraButtons}>
-          <CameraButton onPress={() => {}} name="images-outline" />
+          <CameraButton onPress={() => {router.push("/gallery");}} name="images-outline" />
           <CameraButton
             onPress={actions.setPhoto}
             name={state.mode === "photo" ? "camera" : "camera-outline"}
